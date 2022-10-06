@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_state_manangement/enums/notes/notes_filters.dart';
 import 'package:flutter_native_state_manangement/enums/notes/notes_view_options.dart';
 import 'package:flutter_native_state_manangement/widgets/common/custom_floating_button.dart';
 import 'package:flutter_native_state_manangement/widgets/notes/add_note_sheet.dart';
@@ -6,8 +7,8 @@ import 'package:flutter_native_state_manangement/widgets/notes/bottom_navigation
 import 'package:flutter_native_state_manangement/widgets/notes/notes_grid_view.dart';
 
 class NotesPage extends StatelessWidget {
-  final viewMode = NotesViewOptions.inbox;
-  final viewFilter = NotesViewOptions.archived;
+  final viewMode = NotesViewOptions.grid;
+  final notesFilter = NotesFilters.archived;
 
   const NotesPage({Key? key}) : super(key: key);
 
@@ -19,7 +20,7 @@ class NotesPage extends StatelessWidget {
         elevation: 0,
         foregroundColor: Theme.of(context).primaryColor,
         backgroundColor: Colors.transparent,
-        title: Text(viewFilter == NotesViewOptions.inbox ? 'Notas' : 'Arquivadas'),
+        title: Text(notesFilter == NotesFilters.inbox ? 'Notas' : 'Arquivadas'),
       ),
       body: const Padding(
         padding: EdgeInsets.only(top: 36, left: 12, right: 12),
@@ -42,8 +43,8 @@ class NotesPage extends StatelessWidget {
             onPressed: () => {},
           ),
           IconButton(
-            tooltip: viewFilter.tooltip,
-            icon: viewFilter.icon,
+            tooltip: notesFilter.tooltip,
+            icon: notesFilter.icon,
             onPressed: () => {},
           ),
         ],
