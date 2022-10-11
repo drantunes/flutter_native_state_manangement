@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_native_state_manangement/models/note.dart';
+import 'package:flutter_native_state_manangement/enums/notes/notes_filters.dart';
+import 'package:flutter_native_state_manangement/enums/notes/notes_view_options.dart';
+import 'package:flutter_native_state_manangement/providers/notes_filter_provider.dart';
+import 'package:flutter_native_state_manangement/providers/notes_provider.dart';
+import 'package:flutter_native_state_manangement/providers/notes_view_provider.dart';
 import 'package:flutter_native_state_manangement/widgets/empty_notes.dart';
 import 'package:flutter_native_state_manangement/widgets/notes/note_card.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -12,42 +16,45 @@ class NotesGridView extends StatefulWidget {
 }
 
 class _NotesGridViewState extends State<NotesGridView> with SingleTickerProviderStateMixin {
-  final duration = const Duration(milliseconds: 150);
   late final AnimationController animation;
-  int columnsCount = 2;
+  final duration = const Duration(milliseconds: 150);
+  int columnsCount = 1;
 
   @override
   void initState() {
     super.initState();
     animation = AnimationController(vsync: this, duration: duration);
+    animation.forward();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // ref.read(notesViewModeProvider.notifier).addListener(runTransitionGridView);
-    animation.forward();
+    NotesViewProvider.of(context).addListener(runTransitionGridView);
   }
 
   runTransitionGridView() {
     animation.value = 0;
 
     Future.delayed(duration).then((value) {
-      columnsCount = columnsCount == 1 ? 2 : 1;
-      animation.forward(from: 0);
+      columnsCount = NotesViewProvider.of(context).value == NotesViewOptions.column ? 2 : 1;
+      animation.forward();
     });
   }
 
   @override
   void dispose() {
-    // ref.read(notesViewModeProvider.notifier).removeListener(runTransitionGridView);
+    NotesViewProvider.of(context).removeListener(runTransitionGridView);
     animation.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Note> notes = [];
+    final notesRepository = NotesProvider.of(context);
+    final notes = NotesFilterProvider.of(context).value == NotesFilters.inbox
+        ? notesRepository.inboxNotes
+        : notesRepository.archivedNotes;
 
     return notes.isEmpty
         ? const EmptyNotes()

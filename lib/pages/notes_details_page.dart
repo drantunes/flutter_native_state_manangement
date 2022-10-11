@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_native_state_manangement/models/note.dart';
+import 'package:flutter_native_state_manangement/providers/notes_provider.dart';
 
 class NotesDetailsPage extends StatelessWidget {
   final Note note;
@@ -11,6 +12,7 @@ class NotesDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final repository = NotesProvider.of(context);
     return Scaffold(
       backgroundColor: note.color.shade50,
       appBar: AppBar(
@@ -18,23 +20,21 @@ class NotesDetailsPage extends StatelessWidget {
         foregroundColor: Colors.black87,
         backgroundColor: Colors.transparent,
         actions: [
-          Builder(builder: (context) {
-            return !note.archived
-                ? IconButton(
-                    onPressed: () {
-                      //archiveNote(note);
-                      Navigator.of(context).pop();
-                    },
-                    icon: const Icon(Icons.archive_rounded),
-                  )
-                : IconButton(
-                    onPressed: () {
-                      //moveNoteToInbox(note);
-                      Navigator.of(context).pop();
-                    },
-                    icon: const Icon(Icons.undo),
-                  );
-          }),
+          !note.archived
+              ? IconButton(
+                  onPressed: () {
+                    repository.archiveNote(note);
+                    Navigator.of(context).pop();
+                  },
+                  icon: const Icon(Icons.archive_rounded),
+                )
+              : IconButton(
+                  onPressed: () {
+                    repository.moveNoteToInbox(note);
+                    Navigator.of(context).pop();
+                  },
+                  icon: const Icon(Icons.undo),
+                ),
         ],
       ),
       body: Padding(

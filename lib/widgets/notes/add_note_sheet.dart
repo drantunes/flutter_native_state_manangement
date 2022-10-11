@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_native_state_manangement/mixins/validations_mixin.dart';
+import 'package:flutter_native_state_manangement/models/note.dart';
+import 'package:flutter_native_state_manangement/providers/notes_provider.dart';
 import 'package:flutter_native_state_manangement/widgets/notes/color_selector_button.dart';
 
 class AddNoteSheet extends StatefulWidget {
@@ -21,13 +23,13 @@ class _AddTaskSheetState extends State<AddNoteSheet> with ValidationsMixin {
 
   saveNote() {
     if (_formKey.currentState!.validate()) {
-      // addNote(
-      // Note(
-      //   title: _noteTitle.text,
-      //   description: _noteDescription.text,
-      //   color: _colorSelector.value,
-      // ),
-      //);
+      NotesProvider.of(context).addNote(
+        Note(
+          title: _noteTitle.text,
+          description: _noteDescription.text,
+          color: _colorSelector.value,
+        ),
+      );
       Navigator.of(context).pop();
     }
   }
@@ -88,7 +90,6 @@ class _AddTaskSheetState extends State<AddNoteSheet> with ValidationsMixin {
                               controller: _noteTitle,
                               validator: (val) => combine([
                                 () => isNotEmpty(val),
-                                () => hasFiveChars(val),
                               ]),
                             ),
                           ),
